@@ -1,0 +1,52 @@
+package JavaAdvanced.DefiningClasses.RawData_ex_4;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        int n = Integer.parseInt(scanner.nextLine());
+        Map<String, Car> cars = new LinkedHashMap<>();
+
+        for (int i = 0; i < n; i++) {
+            String[] input = scanner.nextLine().split("\\s+");
+            String model = input[0];
+
+            int engineSpeed = Integer.parseInt(input[1]);
+            int enginePower = Integer.parseInt(input[2]);
+            Engine engine = new Engine(engineSpeed, enginePower);
+
+            int cargoWeight = Integer.parseInt(input[3]);
+            String cargoType = input[4];
+            Cargo cargo = new Cargo(cargoWeight, cargoType);
+
+            Tires[] tires = new Tires[4];
+            int count = 0;
+            for (int j = 5; j < input.length; j += 2) {
+                double tirePressure = Double.parseDouble(input[j]);
+                int tireAge = Integer.parseInt(input[j + 1]);
+                tires[count++] = new Tires(tirePressure, tireAge);
+            }
+
+            Car car = new Car(model, engine, cargo, tires);
+            cars.putIfAbsent(model, car);
+        }
+
+        String commandCargoType = scanner.nextLine();
+        for (Map.Entry<String, Car> carEntry : cars.entrySet()) {
+
+            if (commandCargoType.equals("fragile")
+                    && carEntry.getValue().getCargo().getCargoType().equals(commandCargoType)
+                    && carEntry.getValue().hasTiresWithLessPressureThanOne()) {
+                System.out.println(carEntry.getKey());
+            } else if (commandCargoType.equals("flamable")
+                    && carEntry.getValue().getCargo().getCargoType().equals(commandCargoType)
+                    && carEntry.getValue().getEngine().getEnginePower() > 250) {
+                System.out.println(carEntry.getKey());
+            }
+        }
+    }
+}
