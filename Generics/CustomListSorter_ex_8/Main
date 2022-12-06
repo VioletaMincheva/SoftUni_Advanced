@@ -1,0 +1,52 @@
+package JavaAdvanced.Generics.CustomListSorter_ex_8;
+
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        CustomList<String> customList = new CustomList<>();
+        String command = scanner.nextLine();
+
+        while (!command.equals("END")) {
+            String[] elements = command.split("\\s+");
+            switch (elements[0]) {
+                case "Add":
+                    String valueToAdd = elements[1];
+                    customList.addValue(valueToAdd);
+                    break;
+                case "Remove":
+                    int indexToRemove = Integer.parseInt(elements[1]);
+                    customList.remove(indexToRemove);
+                    break;
+                case "Contains":
+                    String valueContainsOrNot = elements[1];
+                    System.out.println(customList.contains(valueContainsOrNot));
+                    break;
+                case "Swap":
+                    int index1 = Integer.parseInt(elements[1]);
+                    int index2 = Integer.parseInt(elements[2]);
+                    customList.swap(index1, index2);
+                    break;
+                case "Greater":
+                    String greaterElement = elements[1];
+                    System.out.println(customList.countGreaterThan(greaterElement));
+                    break;
+                case "Max":
+                    System.out.println(customList.getMax());
+                    break;
+                case "Min":
+                    System.out.println(customList.getMin());
+                    break;
+                case "Print":
+                    System.out.println(customList);
+                    break;
+                case "Sort":
+                    Sorter.sort(customList);
+                    break;
+            }
+            command = scanner.nextLine();
+        }
+    }
+}
