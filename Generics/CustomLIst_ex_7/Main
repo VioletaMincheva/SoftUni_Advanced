@@ -1,0 +1,49 @@
+package JavaAdvanced.Generics.CustomLIst_ex_7;
+
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        Box<String> boxList = new Box<>();
+        String command = scanner.nextLine();
+
+        while (!command.equals("END")) {
+            String[] elements = command.split("\\s+");
+            switch (elements[0]) {
+                case "Add":
+                    String valueToAdd = elements[1];
+                    boxList.addValue(valueToAdd);
+                    break;
+                case "Remove":
+                    int indexToRemove = Integer.parseInt(elements[1]);
+                    boxList.remove(indexToRemove);
+                    break;
+                case "Contains":
+                    String valueContainsOrNot = elements[1];
+                    System.out.println(boxList.contains(valueContainsOrNot));
+                    break;
+                case "Swap":
+                    int index1 = Integer.parseInt(elements[1]);
+                    int index2 = Integer.parseInt(elements[2]);
+                    boxList.swap(index1, index2);
+                    break;
+                case "Greater":
+                    String greaterElement = elements[1];
+                    System.out.println(boxList.countGreaterThan(greaterElement));
+                    break;
+                case "Max":
+                    System.out.println(boxList.getMax());
+                    break;
+                case "Min":
+                    System.out.println(boxList.getMin());
+                    break;
+                case "Print":
+                    System.out.println(boxList);
+                    break;
+            }
+            command = scanner.nextLine();
+        }
+    }
+}
