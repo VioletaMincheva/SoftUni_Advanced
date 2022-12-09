@@ -1,4 +1,4 @@
-package JavaAdvanced.IteratorsAndComparators.ComperableBooks;
+package JavaAdvanced.IteratorsAndComparators.ComparableBooks;
 
 import java.util.ArrayList;
 import java.util.List;
