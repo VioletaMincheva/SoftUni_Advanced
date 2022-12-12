@@ -1,0 +1,40 @@
+package JavaAdvanced.IteratorsAndComparators.ComparingObjects;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        List<Person> people = new ArrayList<>();
+
+        String command = scanner.nextLine();
+        while (!command.equals("END")) {
+            String[] personInfo = command.split("\\s+");
+            String name = personInfo[0];
+            int age = Integer.parseInt(personInfo[1]);
+            String town = personInfo[2];
+
+            Person person = new Person(name, age, town);
+            people.add(person);
+
+            command = scanner.nextLine();
+        }
+        int indexOfComparePerson = Integer.parseInt(scanner.nextLine()) - 1;
+
+        int equalPeople = 0;
+        for (Person currentPerson : people) {
+            if (currentPerson.compareTo(people.get(indexOfComparePerson)) == 0) {
+                equalPeople++;
+            }
+        }
+
+        if (equalPeople == 1) {
+            System.out.println("No matches");
+        } else {
+            System.out.printf("%d %d %d", equalPeople, people.size() - equalPeople, people.size());
+        }
+    }
+}
