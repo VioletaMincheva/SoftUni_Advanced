@@ -1,0 +1,88 @@
+package JavaAdvanced.ExamPreparation.RetakeExam_16Dec2020;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class Cooking_1 {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        ArrayDeque<Integer> liquidQueue =
+                Arrays.stream(scanner.nextLine().split("\\s+"))
+                        .map(Integer::parseInt)
+                        .collect(Collectors.toCollection(ArrayDeque::new));
+
+        ArrayDeque<Integer> ingredientStack = new ArrayDeque<>();
+        Arrays.stream(scanner.nextLine().split("\\s+"))
+                .map(Integer::parseInt)
+                .forEach(ingredientStack::push);
+
+        Map<Integer, String> cookingTable = new HashMap<>();
+        cookingTable.put(25, "Bread");
+        cookingTable.put(50, "Cake");
+        cookingTable.put(75, "Pastry");
+        cookingTable.put(100, "Fruit Pie");
+        Map<String, Integer> cookedMeal = new TreeMap<>();
+        cookedMeal.put("Bread", 0);
+        cookedMeal.put("Cake", 0);
+        cookedMeal.put("Pastry", 0);
+        cookedMeal.put("Fruit Pie", 0);
+
+        while (!liquidQueue.isEmpty() && !ingredientStack.isEmpty()) {
+
+            int currentLiquid = liquidQueue.poll();
+            int currentIngredient = ingredientStack.pop();
+            int sum = currentIngredient + currentLiquid;
+
+            if (ableToCookProduct(sum)) {
+                String meal = cookingTable.get(sum);
+                cookedMeal.put(meal, cookedMeal.get(meal) + 1);
+
+            } else {
+                ingredientStack.push(currentIngredient + 3);
+            }
+        }
+
+        if (allMealWereCooked(cookedMeal)) {
+            System.out.println("Wohoo! You succeeded in cooking all the food!");
+        } else {
+            System.out.println("Ugh, what a pity! You didn't have enough materials to to cook everything.");
+        }
+        printLiquid(liquidQueue);
+        printIngredient(ingredientStack);
+        cookedMeal.forEach((k, v) -> System.out.println(k + ": " + v));
+
+    }
+
+
+    private static void printIngredient(ArrayDeque<Integer> ingredientStack) {
+        System.out.print("Ingredients left: ");
+        if (ingredientStack.isEmpty()) {
+            System.out.println("none");
+        } else {
+            System.out.println(ingredientStack.stream()
+                    .map(String::valueOf).collect(Collectors.joining(", ")));
+        }
+
+    }
+
+    private static void printLiquid(ArrayDeque<Integer> liquidQueue) {
+        System.out.print("Liquids left: ");
+        if (liquidQueue.isEmpty()) {
+            System.out.println("none");
+        } else {
+            System.out.println(liquidQueue.stream()
+                    .map(String::valueOf).collect(Collectors.joining(", ")));
+        }
+    }
+
+    private static boolean allMealWereCooked(Map<String, Integer> cookedMeal) {
+        return cookedMeal.values().stream().noneMatch(c -> c == 0);
+    }
+
+    private static boolean ableToCookProduct(int sum) {
+        return sum == 25 || sum == 50 || sum == 75 || sum == 100;
+
+    }
+}
