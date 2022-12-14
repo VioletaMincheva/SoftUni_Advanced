@@ -1,0 +1,50 @@
+package JavaAdvanced.ExamPreparation.Exam_22Oct2022;
+
+import java.util.*;
+
+public class EnergyDrinks_1 {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        ArrayDeque<Integer> milligramsOfCaffeineStack = new ArrayDeque<>();
+        Arrays.stream(scanner.nextLine().split(",\\s+"))
+                .map(Integer::parseInt)
+                .forEach(milligramsOfCaffeineStack::push);
+
+        ArrayDeque<Integer> energyDrinksQueue = new ArrayDeque<>();
+        Arrays.stream(scanner.nextLine().split(",\\s+"))
+                .map(Integer::parseInt)
+                .forEach(energyDrinksQueue::add);
+
+        int caffeineDrank = 0;
+        int maxCaffeinePerDay = 300;
+
+        while (!milligramsOfCaffeineStack.isEmpty() && !energyDrinksQueue.isEmpty()) {
+            int currentMgCaffeine = milligramsOfCaffeineStack.pop();
+            int currentDrink = energyDrinksQueue.poll();
+            int currentCaffeine = currentMgCaffeine * currentDrink;
+
+            if (currentCaffeine + caffeineDrank <= maxCaffeinePerDay) {
+                caffeineDrank += currentCaffeine;
+            } else {
+                if (caffeineDrank >= 30) {
+                    caffeineDrank -= 30;
+                } else {
+                    caffeineDrank = 0;
+                }
+                energyDrinksQueue.add(currentDrink);
+            }
+        }
+
+        if (!energyDrinksQueue.isEmpty()) {
+            List<String> list = new ArrayList<>();
+            Collections.addAll(list, String.valueOf(energyDrinksQueue));
+            System.out.print("Drinks left: "
+                    + String.join(", ", list.toString().substring(2, list.toString().length() - 2)));
+        } else {
+            System.out.print("At least Stamat wasn't exceeding the maximum caffeine.");
+        }
+        System.out.println();
+        System.out.printf("Stamat is going to sleep with %d mg caffeine.", caffeineDrank);
+    }
+}
