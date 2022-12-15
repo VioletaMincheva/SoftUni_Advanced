@@ -1,0 +1,50 @@
+package JavaAdvanced.ExamPreparation.Exam_22Feb2020;
+
+import java.util.ArrayDeque;
+import java.util.Arrays;
+import java.util.Scanner;
+import java.util.stream.Collectors;
+
+public class Lootbox_1 {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        //queue
+        ArrayDeque<Integer> queueFirstLootBox =
+                Arrays.stream(scanner.nextLine().split("\\s+"))
+                        .map(Integer::parseInt)
+                        .collect(Collectors.toCollection(ArrayDeque::new));
+        //stack
+        ArrayDeque<Integer> stackSecondLootBox = new ArrayDeque<>();
+        Arrays.stream(scanner.nextLine().split("\\s+"))
+                .map(Integer::parseInt)
+                .forEach(stackSecondLootBox::push);
+
+        int claimedItem = 0;
+
+        while (!queueFirstLootBox.isEmpty() && !stackSecondLootBox.isEmpty()) {
+
+            int item = queueFirstLootBox.peek() + stackSecondLootBox.peek();
+            if (item % 2 == 0) {
+                claimedItem += item;
+                queueFirstLootBox.poll();
+                stackSecondLootBox.pop();
+            } else {
+                int removedItem = stackSecondLootBox.pop();
+                queueFirstLootBox.offer(removedItem);
+            }
+        }
+
+        if (queueFirstLootBox.isEmpty()) {
+            System.out.println("First lootbox is empty");
+        } else {
+            System.out.println("Second lootbox is empty");
+        }
+        if (claimedItem >= 100) {
+            System.out.println("Your loot was epic! Value: " + claimedItem);
+        } else {
+            System.out.println("Your loot was poor... Value: " + claimedItem);
+        }
+    }
+}
