@@ -1,0 +1,156 @@
+package JavaAdvanced.ExamPreparation.Exam_22Feb2020;
+
+import java.util.Scanner;
+
+public class ReVolt_2 {
+
+    private static int playerRow;
+    private static int playerCol;
+    private static int finishRow;
+    private static int finishCol;
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner((System.in));
+
+        int n = Integer.parseInt(scanner.nextLine());
+        int countOfCommands = Integer.parseInt(scanner.nextLine());
+
+        char[][] matrix = new char[n][n];
+        for (int row = 0; row < n; row++) {
+            String line = scanner.nextLine();
+            matrix[row] = line.toCharArray();
+            if (line.contains("f")) {
+                playerRow = row;
+                playerCol = line.indexOf('f');
+            }
+            if (line.contains("F")) {
+                finishRow = row;
+                finishCol = line.indexOf('F');
+            }
+        }
+
+        boolean hasFinished = false;
+
+        while (countOfCommands-- > 0 && !hasFinished) {
+            String command = scanner.nextLine();
+            if (command.equals("up")) {
+                moveUp(matrix);
+            } else if (command.equals("down")) {
+                moveDown(matrix);
+            } else if (command.equals("left")) {
+                moveLeft(matrix);
+            } else if (command.equals("right")) {
+                moveRight(matrix);
+            }
+            hasFinished = playerRow == finishRow && playerCol == finishCol;
+        }
+
+        if (hasFinished) {
+            System.out.println("Player won!");
+        } else {
+            System.out.println("Player lost!");
+        }
+        printMatrix(matrix);
+    }
+
+    private static void moveRight(char[][] matrix) {
+        int prevCol = playerCol;
+        if (playerCol + 1 == matrix.length) {
+            playerCol = -1;
+        }
+        if (matrix[playerRow][playerCol + 1] != 'T') {
+            if (playerCol == -1) {
+                prevCol = matrix.length - 1;
+            }
+            matrix[playerRow][prevCol] = '-';
+            playerCol++;
+            if (matrix[playerRow][playerCol] == 'B') {
+                int beforeRecursiveRow = playerRow;
+                int beforeRecursiveCol = playerCol;
+                moveRight(matrix);
+                matrix[beforeRecursiveRow][beforeRecursiveCol] = 'B';
+            }
+            matrix[playerRow][playerCol] = 'f';
+        } else {
+            playerCol = prevCol;
+        }
+    }
+
+    private static void moveLeft(char[][] matrix) {
+        int prevCol = playerCol;
+        if (playerCol - 1 < 0) {
+            playerCol = matrix.length;
+        }
+        if (matrix[playerRow][playerCol - 1] != 'T') {
+            if (playerCol == matrix.length) {
+                prevCol = 0;
+            }
+            matrix[playerRow][prevCol] = '-';
+            playerCol--;
+            if (matrix[playerRow][playerCol] == 'B') {
+                int beforeRecursiveRow = playerRow;
+                int beforeRecursiveCol = playerCol;
+                moveLeft(matrix);
+                matrix[beforeRecursiveRow][beforeRecursiveCol] = 'B';
+            }
+            matrix[playerRow][playerCol] = 'f';
+        } else {
+            playerCol = prevCol;
+        }
+    }
+
+    private static void moveDown(char[][] matrix) {
+        int prevRow = playerRow;
+        if (playerRow + 1 >= matrix.length) {
+            playerRow = -1;
+        }
+        if (matrix[playerRow + 1][playerCol] != 'T') {
+            if (playerRow == -1) {
+                prevRow = matrix.length - 1;
+            }
+            matrix[prevRow][playerCol] = '-';
+            playerRow++;
+            if (matrix[playerRow][playerCol] == 'B') {
+                int beforeRecursiveRow = playerRow;
+                int beforeRecursiveCol = playerCol;
+                moveDown(matrix);
+                matrix[beforeRecursiveRow][beforeRecursiveCol] = 'B';
+            }
+            matrix[playerRow][playerCol] = 'f';
+        } else {
+            playerRow = prevRow;
+        }
+    }
+
+    private static void moveUp(char[][] matrix) {
+        int prevRow = playerRow;
+        if (playerRow - 1 < 0) {
+            playerRow = matrix.length;
+        }
+        if (matrix[playerRow - 1][playerCol] != 'T') {
+            if (prevRow == matrix.length) {
+                prevRow = 0;
+            }
+            matrix[prevRow][playerCol] = '-';
+            playerRow--;
+            if (matrix[playerRow][playerCol] == 'B') {
+                int beforeRecursiveRow = playerRow;
+                int beforeRecursiveCol = playerCol;
+                moveUp(matrix);
+                matrix[beforeRecursiveRow][beforeRecursiveCol] = 'B';
+            }
+            matrix[playerRow][playerCol] = 'f';
+        } else {
+            playerRow = prevRow;
+        }
+    }
+
+    private static void printMatrix(char[][] matrix) {
+        for (int row = 0; row < matrix.length; row++) {
+            for (int col = 0; col < matrix[row].length; col++) {
+                System.out.print(matrix[row][col]);
+            }
+            System.out.println();
+        }
+    }
+}
