@@ -1,0 +1,110 @@
+package JavaAdvanced.ExamPreparation.Exam_22Oct2022;
+
+import java.util.Scanner;
+
+public class RallyRacing_2 {
+    static int carRow = 0;
+    static int carCol = 0;
+    static int kmPassed = 0;
+    static String racingNumber = "";
+
+    public static void main(String[] args) throws Exception {
+        Scanner scanner = new Scanner(System.in);
+
+        int n = Integer.parseInt(scanner.nextLine());
+        racingNumber = scanner.nextLine();
+
+        String[][] matrix = new String[n][n];
+        for (int row = 0; row < matrix.length; row++) {
+            matrix[row] = scanner.nextLine().split("\\s+");
+        }
+
+        String command = scanner.nextLine();
+        String strMove = "";
+        while (!command.equals("End")) {
+            switch (command) {
+                case "left":
+                    strMove = move(carRow, carCol - 1, matrix);
+                    break;
+                case "right":
+                    strMove = move(carRow, carCol + 1, matrix);
+                    break;
+                case "up":
+                    strMove = move(carRow - 1, carCol, matrix);
+                    break;
+                case "down":
+                    strMove = move(carRow + 1, carCol, matrix);
+                    break;
+            }
+            if (strMove.equals("F")) {
+                break;
+            }
+            command = scanner.nextLine();
+            if (command.equals("End")) {
+                strMove = "End";
+            }
+        }
+        if (strMove.equals("End")) {
+            System.out.printf("Racing car %s DNF.%n", racingNumber);
+        }
+        System.out.printf("Distance covered %d km.%n", kmPassed);
+        printMatrixRaceRoute(matrix);
+    }
+
+    private static void printMatrixRaceRoute(String[][] matrix) {
+        for (int row = 0; row < matrix.length; row++) {
+            for (int col = 0; col < matrix[row].length; col++) {
+                System.out.print(matrix[row][col]);
+            }
+            System.out.println();
+        }
+    }
+
+    private static String move(int newRow, int newCol, String[][] matrix) throws Exception {
+        String signOfMove = null;
+        matrix[carRow][carCol] = ".";
+        if (isOutOfTheRaceRoute(newRow, newCol, matrix)) {
+            throw new Exception("The car is out of the race.");
+        } else {
+            if (matrix[newRow][newCol].equals(".")) {
+                carRow = newRow;
+                carCol = newCol;
+                matrix[carRow][carCol] = "C";
+                kmPassed += 10;
+                signOfMove = ".";
+            } else if (matrix[newRow][newCol].equals("T")) {
+                matrix[newRow][newCol] = ".";
+                kmPassed += 30;
+                int[] coordinateOfSecondEndOFTunnel = findSecondEndOfTunnel(matrix);
+                carRow = coordinateOfSecondEndOFTunnel[0];
+                carCol = coordinateOfSecondEndOFTunnel[1];
+                matrix[carRow][carCol] = "C";
+                signOfMove = "T";
+            } else if (matrix[newRow][newCol].equals("F")) {
+                carRow = newRow;
+                carCol = newCol;
+                matrix[carRow][carCol] = "C";
+                kmPassed += 10;
+                System.out.printf("Racing car %s finished the stage!%n", racingNumber);
+                signOfMove = "F";
+            }
+        }
+        return signOfMove;
+    }
+
+    private static int[] findSecondEndOfTunnel(String[][] matrix) {
+        int[] coordinateOfSecondEndOFTunnel = new int[2];
+        for (int row = 0; row < matrix.length; row++) {
+            for (int col = 0; col < matrix[row].length; col++) {
+                if (matrix[row][col].equals("T")) {
+                    coordinateOfSecondEndOFTunnel = new int[]{row, col};
+                }
+            }
+        }
+        return coordinateOfSecondEndOFTunnel;
+    }
+
+    private static boolean isOutOfTheRaceRoute(int newRow, int newCol, String[][] matrix) {
+        return newRow < 0 || newRow > matrix.length || newCol < 0 || newCol > matrix[newRow].length;
+    }
+}
