@@ -1,0 +1,159 @@
+package JavaAdvanced.ExamPreparation.Exam_28June2020;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class Bombs_1 {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        ArrayDeque<Integer> queueBombEffect = new ArrayDeque<>();
+        Arrays.stream(scanner.nextLine().split(",\\s+"))
+                .map(Integer::parseInt)
+                .forEach(queueBombEffect::add);
+        ArrayDeque<Integer> stackBombCasing = new ArrayDeque<>();
+        Arrays.stream(scanner.nextLine().split(",\\s+"))
+                .map(Integer::parseInt)
+                .forEach(stackBombCasing::push);
+
+        Map<Integer, String> materialBombs = new HashMap<>();
+        materialBombs.put(40, "Datura Bombs");
+        materialBombs.put(60, "Cherry Bombs");
+        materialBombs.put(120, "Smoke Decoy Bombs");
+
+        Map<String, Integer> createdBombs = new TreeMap<>();
+        createdBombs.put("Datura Bombs", 0);
+        createdBombs.put("Cherry Bombs", 0);
+        createdBombs.put("Smoke Decoy Bombs", 0);
+
+        while (!queueBombEffect.isEmpty() && !stackBombCasing.isEmpty()) {
+            if (fillTheBombPunch(createdBombs)) {
+                break;
+            }
+            int currentEffect = queueBombEffect.peek();
+            int currentCasing = stackBombCasing.pop();
+            int currentBombSize = currentEffect + currentCasing;
+            if (materialBombs.containsKey(currentBombSize)) {
+                String currentBombName = materialBombs.get(currentBombSize);
+                createdBombs.put(currentBombName, createdBombs.get(currentBombName) + 1);
+                queueBombEffect.poll();
+            } else {
+                stackBombCasing.push(currentCasing - 5);
+            }
+        }
+        if (fillTheBombPunch(createdBombs)) {
+            System.out.println("Bene! You have successfully filled the bomb pouch!");
+        } else {
+            System.out.println("You don't have enough materials to fill the bomb pouch.");
+        }
+        System.out.println(printBombEffect(queueBombEffect));
+        System.out.println(printBombCasing(stackBombCasing));
+        printCreatedBombs(createdBombs);
+    }
+
+    private static void printCreatedBombs(Map<String, Integer> createdBombs) {
+        createdBombs.forEach((key, value) -> System.out.printf("%s: %d%n", key, value));
+    }
+
+    private static String printBombCasing(ArrayDeque<Integer> stackBombCasing) {
+        StringBuilder outputCasing = new StringBuilder("Bomb Casings: ");
+        if (stackBombCasing.isEmpty()) {
+            outputCasing.append("empty");
+        } else {
+            outputCasing.append(stackBombCasing.stream()
+                    .map(String::valueOf).collect(Collectors.joining(", ")));
+        }
+        return outputCasing.toString();
+    }
+
+    private static String printBombEffect(ArrayDeque<Integer> queueBombEffect) {
+        StringBuilder outputEffects = new StringBuilder("Bomb Effects: ");
+        if (queueBombEffect.isEmpty()) {
+            outputEffects.append("empty");
+        } else {
+            outputEffects.append(queueBombEffect.stream().map(String::valueOf)
+                    .collect(Collectors.joining(", ")));
+        }
+        return outputEffects.toString();
+    }
+    private static boolean fillTheBombPunch(Map<String, Integer> createdBombs) {
+        return createdBombs.get("Datura Bombs") >= 3
+                && createdBombs.get("Cherry Bombs") >= 3
+                && createdBombs.get("Smoke Decoy Bombs") >= 3;
+    }
+}
+
+//import java.util.*;
+//import java.util.stream.Collectors;
+//
+//public class P01_Bombs_28Jun2020 {
+//    public static void main(String[] args) {
+//        Scanner scanner = new Scanner((System.in));
+//
+//        //queue effects
+//        ArrayDeque<Integer> queueEffectsBomb =
+//                Arrays.stream(scanner.nextLine().split(", "))
+//                        .map(Integer::parseInt)
+//                        .collect(Collectors.toCollection(ArrayDeque::new));
+//        //stack casings
+//        ArrayDeque<Integer> stackCasingsBomb = new ArrayDeque<>();
+//        Arrays.stream(scanner.nextLine().split(", "))
+//                .map(Integer::parseInt)
+//                .forEach(stackCasingsBomb::push);
+//
+//        Map<Integer, String> bombTable = new HashMap<>();
+//        bombTable.put(40, "Datura Bombs");
+//        bombTable.put(60, "Cherry Bombs");
+//        bombTable.put(120, "Smoke Decoy Bombs");
+//
+//        Map<String, Integer> createdBombs = new TreeMap<>();
+//        createdBombs.put("Datura Bombs", 0);
+//        createdBombs.put("Cherry Bombs", 0);
+//        createdBombs.put("Smoke Decoy Bombs", 0);
+//
+//        while (!queueEffectsBomb.isEmpty() && !stackCasingsBomb.isEmpty()) {
+//            if (filledTheBombPouch(createdBombs)) {
+//                break;
+//            }
+//            int effects = queueEffectsBomb.peek();
+//            int casings = stackCasingsBomb.pop();
+//            int sum = effects + casings;
+//
+//            if (sum == 40 || sum == 60 || sum == 120) {
+//                queueEffectsBomb.poll();
+//                String currentBomb = bombTable.get(sum);
+//                createdBombs.put(currentBomb, createdBombs.get(currentBomb) + 1);
+//            } else {
+//                stackCasingsBomb.push(casings - 5);
+//            }
+//        }
+//
+//        if (filledTheBombPouch(createdBombs)) {
+//            System.out.println("Bene! You have successfully filled the bomb pouch!");
+//        } else {
+//            System.out.println("You don't have enough materials to fill the bomb pouch.");
+//        }
+//
+//        String outputEffects = "Bomb Effects: "
+//                + (queueEffectsBomb.isEmpty() ? "empty"
+//                : queueEffectsBomb.stream()
+//                .map(String::valueOf)
+//                .collect(Collectors.joining(", ")));
+//
+//        String outputCasings = "Bomb Casings: "
+//                + (stackCasingsBomb.isEmpty() ? "empty"
+//                : stackCasingsBomb.stream()
+//                .map(String::valueOf)
+//                .collect(Collectors.joining(", ")));
+//
+//        System.out.println(outputEffects);
+//        System.out.println(outputCasings);
+//        createdBombs.forEach((k, v) -> System.out.println(k + ": " + v));
+//    }
+//
+//    private static boolean filledTheBombPouch(Map<String, Integer> createdBombs) {
+//        return createdBombs.get("Datura Bombs") >= 3 &&
+//                createdBombs.get("Cherry Bombs") >= 3 &&
+//                createdBombs.get("Smoke Decoy Bombs") >= 3;
+//    }
+//}
