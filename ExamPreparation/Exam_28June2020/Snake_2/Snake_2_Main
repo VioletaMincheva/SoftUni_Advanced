@@ -1,1 +1,196 @@
-...
+package JavaAdvanced.ExamPreparation.Exam_28June2020;
+
+import java.util.Scanner;
+
+public class Snake_2 {
+
+    static int snakeRow = 0;
+    static int snakeCol = 0;
+    static int eatenFood = 0;
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        int n = Integer.parseInt(scanner.nextLine());
+        char[][] matrix = new char[n][n];
+        for (int row = 0; row < n; row++) {
+            String line = scanner.nextLine();
+            matrix[row] = line.toCharArray();
+            if (line.contains("S")) {
+                snakeRow = row;
+                snakeCol = line.indexOf('S');
+            }
+        }
+
+        boolean isWithinTheTerritory = true;
+
+        while (eatenFood < 10 && isWithinTheTerritory) {
+            String command = scanner.nextLine();
+            switch (command) {
+                case "up":
+                    isWithinTheTerritory = move(snakeRow - 1, snakeCol, matrix);
+                    break;
+                case "down":
+                    isWithinTheTerritory = move(snakeRow + 1, snakeCol, matrix);
+                    break;
+                case "left":
+                    isWithinTheTerritory = move(snakeRow, snakeCol - 1, matrix);
+                    break;
+                case "right":
+                    isWithinTheTerritory = move(snakeRow, snakeCol + 1, matrix);
+                    break;
+            }
+        }
+
+
+        if (eatenFood == 10) {
+            System.out.println("You won! You fed the snake.");
+        } else if (!isWithinTheTerritory) {
+            System.out.println("Game over!");
+        }
+        System.out.printf("Food eaten: %d%n", eatenFood);
+        printMatrix(matrix);
+    }
+
+
+    private static boolean move(int newRow, int newCol, char[][] matrix) {
+        matrix[snakeRow][snakeCol] = '.';
+        if (outOfTheTerritory(newRow, newCol, matrix)) {
+            return false;
+        } else {
+            char currentPositionSnake = matrix[newRow][newCol];
+            if (currentPositionSnake == '*') {
+                eatenFood++;
+                snakeRow = newRow;
+                snakeCol = newCol;
+            } else if (currentPositionSnake == 'B') {
+                snakeRow = newRow;
+                snakeCol = newCol;
+                matrix[snakeRow][snakeCol] = '.';
+                int[] indexesOfOtherBurrow = findOtherBurrow(matrix);
+                snakeRow = indexesOfOtherBurrow[0];
+                snakeCol = indexesOfOtherBurrow[1];
+            } else if (currentPositionSnake == '-') {
+                snakeRow = newRow;
+                snakeCol = newCol;
+            }
+            matrix[snakeRow][snakeCol] = 'S';
+        }
+        return true;
+    }
+
+    private static int[] findOtherBurrow(char[][] matrix) {
+        int[] indexes = null;
+        for (int row = 0; row < matrix.length; row++) {
+            for (int col = 0; col < matrix[row].length; col++) {
+                if (matrix[row][col] == 'B') {
+                    indexes = new int[]{row, col};
+                    break;
+                }
+            }
+            if (indexes != null) {
+                break;
+            }
+        }
+        return indexes;
+    }
+
+    private static boolean outOfTheTerritory(int row, int col, char[][] matrix) {
+        return row < 0 || row >= matrix.length || col < 0 || col >= matrix[row].length;
+
+    }
+
+    private static void printMatrix(char[][] matrix) {
+        for (int row = 0; row < matrix.length; row++) {
+            for (int col = 0; col < matrix[row].length; col++) {
+                System.out.print(matrix[row][col]);
+            }
+            System.out.println();
+        }
+    }
+}
+
+//import java.util.Arrays;
+//import java.util.Scanner;
+//
+//public class Snake {
+//
+//        public static void main(String[] args) {
+//
+//            Scanner scan = new Scanner(System.in);
+//            char[][] territory = readMatrix(scan, Integer.parseInt(scan.nextLine()));
+//            int countOfFood = 0;
+//            int[] currentPosition = findIndexes(territory, 'S');
+//
+//            while (countOfFood < 10) {
+//                String input = scan.nextLine();
+//                territory[currentPosition[0]][currentPosition[1]] = '.';
+//                switch (input) {
+//                    case "up":
+//                        currentPosition[0]--;
+//                        break;
+//                    case "down":
+//                        currentPosition[0]++;
+//                        break;
+//                    case "left":
+//                        currentPosition[1]--;
+//                        break;
+//                    case "right":
+//                        currentPosition[1]++;
+//                        break;
+//                }
+//                if (indexIsInTerritory(currentPosition, territory)) {
+//                    if (territory[currentPosition[0]][currentPosition[1]] == '*') {
+//                        countOfFood++;
+//                        territory[currentPosition[0]][currentPosition[1]] = 'S';
+//                    } else if (territory[currentPosition[0]][currentPosition[1]] == 'B') {
+//                        territory[currentPosition[0]][currentPosition[1]] = '.';
+//                        currentPosition = findIndexes(territory, 'B');
+//                    }
+//                } else {
+//                    break;
+//                }
+//            }
+//            if (countOfFood < 10) {
+//                System.out.println("Game over!");
+//            } else {
+//                System.out.println("You won! You fed the snake.");
+//            }
+//            System.out.println("Food eaten: " + countOfFood);
+//
+//            printTerritory(territory);
+//
+//        }
+//
+//        private static boolean indexIsInTerritory(int[] currentPosition, char[][] territory) {
+//            return currentPosition[0] >= 0 && currentPosition[0] < territory.length
+//                    && currentPosition[1] >= 0 && currentPosition[1] < territory.length;
+//        }
+//
+//        private static int[] findIndexes(char[][] matrix, char toFind) {
+//            int[] indexes = new int[2];
+//            for (int i = 0; i < matrix.length; i++) {
+//                for (int j = 0; j < matrix[0].length; j++) {
+//                    if (matrix[i][j] == toFind) {
+//                        indexes[0] = i;
+//                        indexes[1] = j;
+//                    }
+//                }
+//            }
+//            return indexes;
+//        }
+//
+//        private static char[][] readMatrix(Scanner scan, int n) {
+//            char[][] matrix = new char[n][n];
+//            for (int row = 0; row < matrix.length; row++) {
+//                matrix[row] = scan.nextLine().replaceAll("\\s+", "").toCharArray();
+//            }
+//            return matrix;
+//        }
+//
+//        private static void printTerritory(char[][] territory) {
+//            Arrays.stream(territory).map(row -> Arrays.toString(row).replaceAll("[\\[\\]]", "")
+//                    .replaceAll(", ", "")).forEach(System.out::println);
+//        }
+//    }
+
